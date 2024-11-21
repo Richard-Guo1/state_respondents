@@ -21,7 +21,7 @@ library(ggplot2)
 
 # Method of Obtaining the Data
 
-To retrieve data from IPUMS USA, we first login to the IPUMS website and selected "IPUMS USA." From there, we clicked "Get Data" and chose the "2022 ACS" sample under the "SELECT SAMPLE" section. To obtain state-level data, we selected "HOUSEHOLD" \> "GEOGRAPHIC" and added the "STATEICP" variable to the data cart. For individual-level data, we went to the "PERSON" section and included the "EDUC" variable. After reviewing the cart, we clicked "CREATE DATA EXTRACT" and set the "DATA FORMAT" to "csv." Finally, we submitted the extract and then downloaded and saved the file locally (e.g., "usa_00001.csv") for use in R.
+To retrieve data from [@ipumsUSA], we first log in to the IPUMS website and selected "IPUMS USA." From there, we clicked "Get Data" and chose the "2022 ACS" sample under the "SELECT SAMPLE" section. To obtain state-level data, we selected "HOUSEHOLD" \> "GEOGRAPHIC" and added the "STATEICP" variable to the data cart. For individual-level data, we went to the "PERSON" \> "EDUCATION" section and included the "EDUC" variable. After reviewing the cart, we clicked "CREATE DATA EXTRACT" and set the "DATA FORMAT" to "csv." Finally, we submitted the extract and then downloaded and saved the file locally (e.g., "usa_00001.csv") for use in R.
 
 ```{r}
 #| echo: false
@@ -110,7 +110,7 @@ library(ggplot2)
 library(reshape2)
  
 # Further process the data
-data_melted <- melt(doctoral_count, id.vars = "STATEICP", measure.vars = c("estimated_total", "actual_total"))
+  data_melted <- melt(doctoral_count, id.vars = "STATEICP", measure.vars = c("estimated_total", "actual_total"))
  
 # Generate chart
 ggplot(data_melted, aes(x = factor(data_melted$STATEICP), y = value, fill = variable)) +
