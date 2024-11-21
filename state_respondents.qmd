@@ -21,7 +21,7 @@ library(ggplot2)
 
 # Method of Obtaining the Data
 
-To retrieve data from [@ipumsUSA], we first log in to the IPUMS website and selected "IPUMS USA." From there, we clicked "Get Data" and chose the "2022 ACS" sample under the "SELECT SAMPLE" section. To obtain state-level data, we selected "HOUSEHOLD" \> "GEOGRAPHIC" and added the "STATEICP" variable to the data cart. For individual-level data, we went to the "PERSON" \> "EDUCATION" section and included the "EDUC" variable. After reviewing the cart, we clicked "CREATE DATA EXTRACT" and set the "DATA FORMAT" to "csv." Finally, we submitted the extract and then downloaded and saved the file locally (e.g., "usa_00001.csv") for use in R.
+To retrieve data from the IPUMS USA database[@ipumsUSA], we first log in to the IPUMS website and selected "IPUMS USA." From there, we clicked "Get Data" and chose the "2022 ACS" sample under the "SELECT SAMPLE" section. To obtain state-level data, we selected "HOUSEHOLD" \> "GEOGRAPHIC" and added the "STATEICP" variable to the data cart. For individual-level data, we went to the "PERSON" \> "EDUCATION" section and included the "EDUC" variable. After reviewing the cart, we clicked "CREATE DATA EXTRACT" and set the "DATA FORMAT" to "csv." Finally, we submitted the extract and then downloaded and saved the file locally (e.g., "usa_00001.csv") for use in RStudio[@citeR].
 
 ```{r}
 #| echo: false
@@ -72,18 +72,20 @@ The table below presents an overview of the distribution of respondents with doc
 ```{r}
 #| echo: false
 #| tbl-cap: estimated total respondents
+#| label: estimated
 doctoral_count <- doctoral_count %>%
-  mutate(estimated_total = doctoral / california_ratio)
+  mutate(estimated_total = round(doctoral / california_ratio))
 kable(head(doctoral_count))  %>%
   kable_styling(full_width = FALSE, font_size = 10) %>%
   column_spec(1:3, width = "2cm")
 ```
 
-The process of comparing it with the actual data of respondents is as follows.The table below provides a comparison between the estimated total respondents, derived using the ratio estimator method, and the actual total respondents for each state. The doctoral_respondents column represents the number of individuals with doctoral degrees in each state, while the estimated_total_respondents column shows the projected total population for each state, calculated by applying the California ratio (0.01619752) to the number of doctoral respondents in each state. The actual_total_respondents column reflects the true population count for each state, which was directly obtained from the data. This allows for a comparison between the estimated and actual figures. In state code 1, the actual number of respondents is 37,369, slightly higher than the estimate of 37,042. For state code 3, the actual total is 73,077, significantly lower than the estimate of 124,340. These differences illustrate the potential inaccuracies that can arise from using a ratio estimator when the relationship between the doctoral respondents and the total population is not consistent across states. This highlights the importance of accounting for regional variations in such analyses.
+The process of comparing it with the actual data of respondents is as follows.The table below provides a comparison between the estimated total respondents, derived using the ratio estimator method, and the actual total respondents for each state. The doctoral_respondents column represents the number of individuals with doctoral degrees in each state, while the estimated_total_respondents column shows the projected total population for each state, calculated by applying the California ratio (0.01619752) to the number of doctoral respondents in each state. The estimated values were rounded to the nearest whole number. The actual_total_respondents column reflects the true population count for each state, which was directly obtained from the data. This allows for a comparison between the estimated and actual figures. In state code 1, the actual number of respondents is 37,369, slightly higher than the estimate of 37,042. For state code 3, the actual total is 73,077, significantly lower than the estimate of 124,340. These differences illustrate the potential inaccuracies that can arise from using a ratio estimator when the relationship between the doctoral respondents and the total population is not consistent across states. This highlights the importance of accounting for regional variations in such analyses.
 
 ```{r}
 #| echo: false
 #| tbl-cap: comparison of the estimated and actual total respondents 
+#| label: tbl-compare
 
 actual_total_count <- ipums_data %>%
   group_by(STATEICP) %>%
@@ -115,10 +117,8 @@ library(reshape2)
 # Generate chart
 ggplot(data_melted, aes(x = factor(data_melted$STATEICP), y = value, fill = variable)) +
   geom_bar(stat = "identity", position = "dodge") +
-  labs(x = "State Code", y = "Number of Respondents", fill = "Respondent Type",
-       title = "Comparison of Estimated and Actual Total Respondents") +
-  theme_minimal() +
-  coord_flip()
+  labs(x = "State Code", y = "Number of Respondents", fill = "Respondent Type")   + theme_minimal() + coord_flip() + 
+  scale_fill_hue(labels = c("Estimated", "Actual"))
 ```
 
 # Explanation of Why They are Different
